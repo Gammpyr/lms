@@ -1,7 +1,7 @@
-from rest_framework import generics
+from rest_framework import generics, viewsets
 
-from users.models import CustomUser
-from users.serializers import CustomUserSerializer
+from users.models import CustomUser, Payment
+from users.serializers import CustomUserSerializer, PaymentSerializer
 
 
 class UserCreateAPIView(generics.CreateAPIView):
@@ -16,3 +16,8 @@ class UserUpdateAPIView(generics.UpdateAPIView):
 class UserListAPIView(generics.ListAPIView):
     serializer_class = CustomUserSerializer
     queryset = CustomUser.objects.all()
+
+
+class PaymentViewSet(viewsets.ModelViewSet):
+    serializer_class = PaymentSerializer
+    queryset = Payment.objects.all()
