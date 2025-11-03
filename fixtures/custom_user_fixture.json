@@ -1,0 +1,23 @@
+[
+{
+    "model": "users.customuser",
+    "pk": 1,
+    "fields": {
+        "password": "admin",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "admin",
+        "first_name": "Test",
+        "last_name": "Testov",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-10-31T19:05:33.258Z",
+        "email": "admin@admin.ru",
+        "phone_number": "88005553535",
+        "avatar": "",
+        "country": "Russia",
+        "groups": [],
+        "user_permissions": []
+    }
+}
+]

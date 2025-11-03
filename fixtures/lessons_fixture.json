@@ -1,0 +1,32 @@
+[
+{
+    "model": "lms.lesson",
+    "pk": 5,
+    "fields": {
+        "name": "DRF Serializers",
+        "image": "",
+        "description": "Learning Serializers in DRF",
+        "course": 2
+    }
+},
+{
+    "model": "lms.lesson",
+    "pk": 6,
+    "fields": {
+        "name": "DRF Filters",
+        "image": "",
+        "description": "Learning filters in DRF",
+        "course": 2
+    }
+},
+{
+    "model": "lms.lesson",
+    "pk": 7,
+    "fields": {
+        "name": "Basic Java",
+        "image": "",
+        "description": "Learn basic Java functions",
+        "course": 3
+    }
+}
+]

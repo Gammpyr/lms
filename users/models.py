@@ -1,6 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from lms.models import Course, Lesson
+
+
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True, verbose_name="Электронная почта")
     phone_number = models.CharField(max_length=46, blank=True, null=True, verbose_name="Номер телефона")
@@ -16,3 +19,21 @@ class CustomUser(AbstractUser):
     @property
     def display_name(self):
         return f'{self.first_name} {self.last_name}' or self.username
+
+
+class Payment(models.Model):
+    PAYMENT_METHODS = [
+        ("cash", "Наличные"),
+        ("transfer", "Перевод")
+    ]
+
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='payments')
+    payment_date = models.DateTimeField(auto_now_add=True, verbose_name="Дата платежа")
+    paid_course = models.ForeignKey(Course, blank=True, null=True, on_delete=models.CASCADE, related_name='paid_users', verbose_name="Оплаченный курс")
+    paid_lesson = models.ForeignKey(Lesson, blank=True, null=True, on_delete=models.CASCADE, related_name='paid_users', verbose_name="Оплаченный урок")
+    payment_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Сумма платежа")
+    payment_method = models.CharField(max_length=50, choices=PAYMENT_METHODS, default="transfer", verbose_name="Метод оплаты")
+
+    class Meta:
+        verbose_name = "Платеж"
+        verbose_name_plural = "Платежи"
