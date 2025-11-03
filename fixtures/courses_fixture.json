@@ -1,0 +1,22 @@
+[
+{
+    "model": "lms.course",
+    "pk": 2,
+    "fields": {
+        "name": "Python",
+        "description": "This is Python learning course",
+        "image": "",
+        "video_url": null
+    }
+},
+{
+    "model": "lms.course",
+    "pk": 3,
+    "fields": {
+        "name": "JAVA",
+        "description": "This is JAVA learning course",
+        "image": "",
+        "video_url": null
+    }
+}
+]
