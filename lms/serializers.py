@@ -1,3 +1,5 @@
+import re
+
 from rest_framework import serializers
 
 from .models import Course, Lesson, CourseSubscription
@@ -28,6 +30,12 @@ class CourseSerializer(serializers.ModelSerializer):
         if request:
             return CourseSubscription.objects.filter(user=request.user, course=obj).exists()
         return False
+
+    def validate(self, attrs):
+        video_url = attrs.get('video_url')
+        if video_url and not re.search(r'(youtube\.com|youtu\.be)', video_url):
+            raise serializers.ValidationError({'video_url': 'Разрешены только ссылки на YouTube'})
+        return attrs
 
     class Meta:
         model = Course
