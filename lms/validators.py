@@ -9,11 +9,9 @@ class UrlValidator:
         self.field = field
 
     def __call__(self, value):
-        pattern = re.compile(r'youtube\.com')
-        print(value)
-        validate_url = dict(value).get(self.field)
-        if validate_url is None or validate_url == '':
-            return
-        if not bool(pattern.search(validate_url)):
-            raise ValidationError('Запрещены ссылки на сторонние ресурсы')
+        pattern = re.compile(r'(youtube\.com|youtu\.be)')
+        field_value = value.get(self.field)
+
+        if field_value and not bool(pattern.search(field_value)):
+            raise ValidationError('Запрещены ссылки на сторонние ресурсы, кроме YouTube')
 
