@@ -25,7 +25,7 @@ class Lesson(models.Model):
     owner = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, blank=True, null=True,
                               related_name='lessons', verbose_name='Владелец')
 
-    course = models.ForeignKey('Course', on_delete=models.CASCADE, related_name='course_lessons', verbose_name='Курс')
+    course = models.ForeignKey('Course', on_delete=models.CASCADE, related_name='lessons', verbose_name='Курс')
 
     def __str__(self):
         return self.name
