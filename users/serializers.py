@@ -7,6 +7,7 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = '__all__'
+        read_only_fields = ['user','session_id', 'payment_url', 'product_id', 'price_id']
 
     def validate_payment_amount(self, value):
         if value <= 0:
