@@ -8,6 +8,8 @@ class Course(models.Model):
     video_url = models.URLField(blank=True, null=True, verbose_name='Ссылка на видео')
     owner = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, blank=True, null=True,
                               related_name='courses', verbose_name='Владелец')
+    notification_task_id = models.CharField(max_length=255, null=True, blank=True,  verbose_name='ID celery-задачи')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
 
     def __str__(self):
         return self.name

@@ -41,6 +41,7 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Course
         fields = '__all__'
         validators = [UrlValidator(field='video_url')]
+        read_only_fields = ['notification_task_id', 'owner', 'updated_at']
 
 class CourseSubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
