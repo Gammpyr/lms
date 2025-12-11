@@ -61,36 +61,36 @@
 
 ### Аутентификация
 
-POST /api/token/ - Получение JWT токена
-POST /api/token/refresh/ - Обновление токена
+- POST /api/token/ - Получение JWT токена
+- POST /api/token/refresh/ - Обновление токена
 
 ### Пользователи
 
-GET /users/ - Список пользователей
-POST /users/create/ - Создание пользователя
-PUT /users/update/{id}/ - Обновление пользователя
+- GET /users/ - Список пользователей
+- POST /users/create/ - Создание пользователя
+- PUT /users/update/{id}/ - Обновление пользователя
 
 ### Курсы
 
-GET /courses/ - Список курсов (с пагинацией)
-POST /courses/ - Создание курса (только авторизованные)
-GET /courses/{id}/ - Детали курса
-PUT /courses/{id}/ - Обновление курса (владелец/модератор)
-PATCH /courses/{id}/ - Частичное обновление
-DELETE /courses/{id}/ - Удаление (только владелец)
+- GET /courses/ - Список курсов (с пагинацией)
+- POST /courses/ - Создание курса (только авторизованные)
+- GET /courses/{id}/ - Детали курса
+- PUT /courses/{id}/ - Обновление курса (владелец/модератор)
+- PATCH /courses/{id}/ - Частичное обновление
+- DELETE /courses/{id}/ - Удаление (только владелец)
 
 ### Уроки
 
-GET /lessons/ - Список уроков
-POST /lessons/ - Создание урока
-GET /lessons/{id}/ - Детали урока
-PUT /lessons/{id}/ - Обновление урока
-DELETE /lessons/{id}/ - Удаление урока
+- GET /lessons/ - Список уроков
+- POST /lessons/ - Создание урока
+- GET /lessons/{id}/ - Детали урока
+- PUT /lessons/{id}/ - Обновление урока
+- DELETE /lessons/{id}/ - Удаление урока
 
 ### Платежи
 
-GET /payments/ - История платежей (фильтрация по курсу/уроку)
-POST /payments/ - Создание платежной сессии Stripe
+- GET /payments/ - История платежей (фильтрация по курсу/уроку)
+- POST /payments/ - Создание платежной сессии Stripe
 
 
 ### Установка зависимостей
@@ -98,10 +98,55 @@ POST /payments/ - Создание платежной сессии Stripe
     poetry install
 ```
 
+## Быстрый старт с Docker
+
+### Требования
+- Docker версии 20.10+
+
+### Запуск проекта
+```bash
+# Собрать и запустить все сервисы
+docker-compose up -d --build
+```
+
+### Проверка статуса контейнеров
+```bash
+docker-compose ps
+```
+
+### Проверить здоровье всех сервисов:
+
+```bash
+# База данных
+docker-compose exec db pg_isready -U postgres
+
+# Redis
+docker-compose exec redis redis-cli ping
+
+# Django
+curl -f http://localhost:8000/health/ || echo "Ошибка"
+```
+
+
+### Остановка проекта
+```bash
+docker-compose down
+
+# или 
+
+docker-compose stop
+```
+
+### Проверить доступность сервисов:
+
+Веб-интерфейс: http://localhost:8000
+
+Admin панель: http://localhost:8000/admin
+
+
 ### Документация API
 После запуска сервера:
 
 Swagger UI: http://localhost:8000/api/docs/
 
 ReDoc: http://localhost:8000/api/schema/redoc/
-
