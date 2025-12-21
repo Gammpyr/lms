@@ -19,10 +19,7 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def get_lesson_count(self, obj):
         """ПОдсчитываем количество уроков в курсе"""
-        if obj.course_lessons.all():
-            return obj.course_lessons.all().count()
-        else:
-            return 0
+        return obj.lesson_set.count()
 
     def get_is_subscribed(self, obj):
         """Проверяем подписан ли пользователь на курс"""
