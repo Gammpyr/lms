@@ -192,15 +192,11 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_EMAIL_HOST_USER')
 
 TESTING = 'test' in sys.argv
 
-TESTING = 'test' in sys.argv
-
 if TESTING:
-    # В тестах задачи выполняются сразу, синхронно
     CELERY_TASK_ALWAYS_EAGER = True
     CELERY_TASK_EAGER_PROPAGATES = True
-    # Отключаем Redis — не нужен
     CELERY_BROKER_URL = 'memory://'
-    CELERY_RESULT_BACKEND = 'cache'
+    CELERY_RESULT_BACKEND = 'django-cache'
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
