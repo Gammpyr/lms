@@ -64,11 +64,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+#          echo "SECRET_KEY=$SECRET_KEY"
+
     - name: Create .env file for CI
       run: |
         # Используем переменные окружения напрямую
         {
-#          echo "SECRET_KEY=$SECRET_KEY"
           echo "SECRET_KEY=django-insecure-test-key-for-ci-1234567890abcdef
           echo "DEBUG=$DEBUG"
           echo "ALLOWED_HOSTS=$ALLOWED_HOSTS"
