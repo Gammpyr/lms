@@ -42,13 +42,16 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Create static directory (to avoid staticfiles warning)
+      run: mkdir -p static
+
     - name: Run migrations
       env:
         DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
         POSTGRES_DB: lms_test
-        POSTGRES_USER: ${{ secrets.POSTGRES_PASSWORD }}
-        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        POSTGRES_HOST: localhost
+        POSTGRES_USER: runner
+        POSTGRES_PASSWORD: password
+        POSTGRES_HOST: postgres
         POSTGRES_PORT: 5432
       run: python manage.py migrate
 
@@ -56,9 +59,9 @@ jobs:
       env:
         DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
         POSTGRES_DB: lms_test
-        POSTGRES_USER: ${{ secrets.POSTGRES_PASSWORD }}
-        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        POSTGRES_HOST: localhost
+        POSTGRES_USER: runner
+        POSTGRES_PASSWORD: password
+        POSTGRES_HOST: postgres
         POSTGRES_PORT: 5432
       run: python manage.py test
 
