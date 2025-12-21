@@ -111,17 +111,21 @@ class CourseAPITestCase(APITestCase):
 
         self.assertEqual(response.status_code, HTTP_200_OK)
 
-        self.assertEqual(
-            response.json(),
-            {'description': 'test_desc1',
-             'id': self.course1.id,
-             'image': None,
-             'is_subscribed': False,
-             'lesson_count': 0,
-             'name': 'test_course1',
-             'owner': self.user1.id,
-             'video_url': None}
-        )
+        expected = {
+            'description': 'test_desc1',
+            'id': self.course1.id,
+            'image': None,
+            'is_subscribed': False,
+            'lesson_count': 0,
+            'name': 'test_course1',
+            'owner': self.user1.id,
+            'video_url': None,
+            'lessons': [],
+            'notification_task_id': None,
+            'updated_at': response.json()['updated_at'],
+        }
+
+        self.assertEqual(response.json(), expected)
 
     def test_put_course(self):
         """
@@ -221,13 +225,12 @@ class LessonAPITestCase(APITestCase):
         self.client.force_authenticate(user=self.user1)
 
         data = {
-            'name': 'test_course1',
+            'name': 'test_lesson1_updated',
             'description': 'test_lesson_desc1',
-            'owner': self.user1.id,
             'course': self.course1.id
         }
 
-        response = self.client.put(f'/courses/{self.course1.id}/', data)
+        response = self.client.put(f'/lessons/{self.lesson1.id}/', data)
 
         self.assertEqual(response.status_code, HTTP_200_OK)
 
