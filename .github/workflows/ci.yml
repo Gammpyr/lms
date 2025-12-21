@@ -159,6 +159,8 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
+#          SECRET_KEY=${DJANGO_SECRET_KEY}
+
     - name: Deploy to Server
       uses: appleboy/ssh-action@v0.1.7
       env:
@@ -176,9 +178,7 @@ jobs:
           cd ${{ secrets.DEPLOY_DIR || '/var/www/lms' }}
           docker-compose down || true
           git pull origin main
-          
           cat > .env << 'EOF'
-#          SECRET_KEY=${DJANGO_SECRET_KEY}
           SECRET_KEY=django-insecure-test-key-for-ci-1234567890abcdef
           DEBUG=False
           ALLOWED_HOSTS=${SERVER_IP},localhost,127.0.0.1
