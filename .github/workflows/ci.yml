@@ -51,7 +51,7 @@ jobs:
         POSTGRES_DB: lms_test
         POSTGRES_USER: runner
         POSTGRES_PASSWORD: password
-        POSTGRES_HOST: postgres
+        POSTGRES_HOST: 127.0.0.1
         POSTGRES_PORT: 5432
       run: python manage.py migrate
 
@@ -61,7 +61,7 @@ jobs:
         POSTGRES_DB: lms_test
         POSTGRES_USER: runner
         POSTGRES_PASSWORD: password
-        POSTGRES_HOST: postgres
+        POSTGRES_HOST: 127.0.0.1
         POSTGRES_PORT: 5432
       run: python manage.py test
 
