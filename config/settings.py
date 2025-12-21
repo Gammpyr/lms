@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
+import sys
 from datetime import timedelta
 from pathlib import Path
 
@@ -187,3 +188,25 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_EMAIL_HOST_USER')
+
+
+TESTING = 'test' in sys.argv
+
+TESTING = 'test' in sys.argv
+
+if TESTING:
+    # В тестах задачи выполняются сразу, синхронно
+    CELERY_TASK_ALWAYS_EAGER = True
+    CELERY_TASK_EAGER_PROPAGATES = True
+    # Отключаем Redis — не нужен
+    CELERY_BROKER_URL = 'memory://'
+    CELERY_RESULT_BACKEND = 'cache'
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        }
+    }
+else:
+    # Обычные настройки для продакшена/локальной разработки
+    CELERY_BROKER_URL = os.getenv('REDIS_URL', 'redis://redis:6379/0')
+    CELERY_RESULT_BACKEND = os.getenv('REDIS_URL', 'redis://redis:6379/0')
