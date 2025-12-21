@@ -93,17 +93,14 @@ jobs:
 
       - name: Deploy to Server
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-            cat > $HOME/.env << 'ENV_END'
-            ${{ secrets.ENV_FILE_CONTENTS }}
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << EOF
+            cat > /home/yc-user/.env << 'ENV_END'
+              ${{ secrets.ENV_FILE_CONTENTS }} 
             ENV_END
-
             chmod 600 /home/yc-user/.env
-
+            
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/lms:${{ github.sha }}
             docker stop lms || true
             docker rm lms || true
-            docker run -d --name lms -p 80:8000 \
-              --env-file /home/yc-user/.env \
-              ${{ secrets.DOCKER_HUB_USERNAME }}/lms:${{ github.sha }}
-          EOF
+            docker run -d --name lms -p 80:8000 --env-file /home/yc-user/.env ${{ secrets.DOCKER_HUB_USERNAME }}/lms:${{ github.sha }}
+            EOF
