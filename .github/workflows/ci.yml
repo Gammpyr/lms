@@ -63,24 +63,22 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Create .env file for CI
+    - name: Create .env file for CI (простой способ)
       run: |
-        # Экранируем секрет с помощью jq
-        ESCAPED_SECRET=$(echo -n "${{ secrets.DJANGO_SECRET_KEY }}" | jq -sRr @json)
-        
-        cat > .env << EOF
-        SECRET_KEY=$(echo "$ESCAPED_SECRET" | sed 's/^"//;s/"$//')
-        DEBUG=False
-        ALLOWED_HOSTS=158.160.216.89,localhost,127.0.0.1
-        POSTGRES_DB=lms_test
-        POSTGRES_USER=postgres
-        POSTGRES_PASSWORD=postgres
-        POSTGRES_HOST=localhost
-        POSTGRES_PORT=5432
-        REDIS_URL=redis://localhost:6379/0
-        CELERY_BROKER_URL=redis://localhost:6379/0
-        CELERY_RESULT_BACKEND=redis://localhost:6379/0
-        EOF
+        # Используем переменные окружения напрямую
+        {
+          echo "SECRET_KEY=$SECRET_KEY"
+          echo "DEBUG=$DEBUG"
+          echo "ALLOWED_HOSTS=$ALLOWED_HOSTS"
+          echo "POSTGRES_DB=$POSTGRES_DB"
+          echo "POSTGRES_USER=$POSTGRES_USER"
+          echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD"
+          echo "POSTGRES_HOST=$POSTGRES_HOST"
+          echo "POSTGRES_PORT=$POSTGRES_PORT"
+          echo "REDIS_URL=$REDIS_URL"
+          echo "CELERY_BROKER_URL=$CELERY_BROKER_URL"
+          echo "CELERY_RESULT_BACKEND=$CELERY_RESULT_BACKEND"
+        } > .env
     
 
     - name: Wait for PostgreSQL to be ready
