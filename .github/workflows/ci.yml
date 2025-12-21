@@ -104,7 +104,7 @@ jobs:
             ENV_END
             chmod 600 .env
           
-            # Пересобираем и запускаем
+
             docker compose down
             docker compose up -d --build
           EOF
