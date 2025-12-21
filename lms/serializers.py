@@ -19,8 +19,8 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def get_lesson_count(self, obj):
         """ПОдсчитываем количество уроков в курсе"""
-        if obj.course_lessons.all():
-            return obj.course_lessons.all().count()
+        if obj.lessons.all():
+            return obj.lessons.all().count()
         else:
             return 0
 
