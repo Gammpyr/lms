@@ -230,7 +230,7 @@ class LessonAPITestCase(APITestCase):
             'course': self.course1.id
         }
 
-        response = self.client.put(f'/lessons/{self.lesson1.id}/', data)
+        response = self.client.put(f'/lessons/update/{self.lesson1.id}/', data)
 
         self.assertEqual(response.status_code, HTTP_200_OK)
 
