@@ -128,9 +128,9 @@ jobs:
           echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
           
           # Поднимаем всё через docker-compose
-          docker-compose down
-          docker-compose pull
-          docker-compose up -d --remove-orphans
+          docker compose down
+          docker compose pull
+          docker compose up -d --remove-orphans
           
           # Выход из Docker Hub
           docker logout
