@@ -88,6 +88,8 @@ jobs:
       - name: Deploy to server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << EOF
+          echo "Cleaning old Docker images..."
+          docker system prune -f 2>/dev/null || true
           echo "$DOCKER_HUB_ACCESS_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
           docker pull $DOCKER_HUB_USERNAME/myapp:$GITHUB_SHA
           docker stop myapp || true
