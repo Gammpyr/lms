@@ -5,7 +5,7 @@ services:
       sh -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
-      - static_volume:/app/static
+      - static_volume:/app/staticfiles
     ports:
       - "8000:8000"
     depends_on:
@@ -15,11 +15,17 @@ services:
       - .env
 
   db:
-    image: postgres:16.0
+    image: postgres:16
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=lms
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1968919322
     env_file:
       - .env
+    ports:
+      - "5432:5432"
 
   redis:
     image: redis:7-alpine
