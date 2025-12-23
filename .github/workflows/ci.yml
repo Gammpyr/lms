@@ -42,6 +42,8 @@ jobs:
 
       - name: Run tests
         run: python manage.py test
+        env:
+          SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
 
   build:
     needs: test
