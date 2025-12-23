@@ -9,12 +9,13 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-from dotenv import load_dotenv
+
 
 import os
 import sys
 from datetime import timedelta
 from pathlib import Path
+from dotenv import load_dotenv
 
 load_dotenv()
 
