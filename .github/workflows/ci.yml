@@ -27,7 +27,7 @@ jobs:
     needs: lint
 
     env:
-      SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+      DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
       ALLOWED_HOSTS: "158.160.216.89,localhost,127.0.0.1"
 
     steps:
