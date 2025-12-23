@@ -105,26 +105,31 @@ jobs:
 
       - name: Deploy to server
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << EOF
-          echo "$DOCKER_HUB_ACCESS_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
-          docker pull $DOCKER_HUB_USERNAME/myapp:$GITHUB_SHA
-          docker stop myapp || true
-          docker rm myapp || true
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          docker system prune -f
+          echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+          docker stop myapp 2>/dev/null || true
+          docker rm myapp 2>/dev/null || true
+          
+          # Запускаем контейнер без миграций
           docker run -d \
             --name myapp \
             -p 80:8000 \
-            -e DJANGO_SECRET_KEY='$DJANGO_SECRET_KEY' \
-            -e REDIS_URL="redis://localhost:6379/0" \
-            -e CELERY_BROKER_URL="redis://localhost:6379/0" \
-            -e CELERY_RESULT_BACKEND="redis://localhost:6379/0" \
-            $DOCKER_HUB_USERNAME/myapp:$GITHUB_SHA
-          docker logout
+            -e SECRET_KEY="${{ secrets.DJANGO_SECRET_KEY }}" \
+            -e DEBUG="False" \
+            -e ALLOWED_HOSTS="${{ secrets.SERVER_IP }},localhost,127.0.0.1" \
+            -e SKIP_MIGRATIONS="true" \
+            ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+          
+          # Проверяем что контейнер запущен
+          sleep 3
+          if docker ps | grep -q myapp; then
+            echo "Container is running!"
+          else
+            echo "Container failed to start"
+            docker logs myapp
+          fi
           EOF
-        env:
-          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-          DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-          GITHUB_SHA: ${{ github.sha }}
-          SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
 
 
