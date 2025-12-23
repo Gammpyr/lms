@@ -200,3 +200,14 @@ if 'test' in sys.argv:
     CELERY_RESULT_BACKEND = 'cache+memory://'
     CELERY_TASK_ALWAYS_EAGER = True  # Задачи выполняются сразу, асинхронно
     CELERY_TASK_EAGER_PROPAGATES = True
+
+#
+# # Отключаем миграции если нет БД
+# if 'migrate' in sys.argv or 'runserver' in sys.argv:
+#     # Проверяем доступность БД
+#     try:
+#         from django.db import connections
+#         connections['default'].ensure_connection()
+#     except:
+#         print("Database not available, skipping migrations")
+#         sys.exit(0)
