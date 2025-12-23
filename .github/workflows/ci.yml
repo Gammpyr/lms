@@ -96,7 +96,6 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-
     steps:
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.9.0
@@ -105,28 +104,36 @@ jobs:
 
       - name: Deploy to server
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << EOF
-          echo "Cleaning old Docker images..."
-          docker system prune -f 2>/dev/null || true
-          echo "$DOCKER_HUB_ACCESS_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
-          docker pull $DOCKER_HUB_USERNAME/myapp:$GITHUB_SHA
-          docker stop myapp || true
-          docker rm myapp || true
-          docker run -d \
-            --name myapp \
-            -p 80:8000 \
-            -e DJANGO_SECRET_KEY='$DJANGO_SECRET_KEY' \
-            -e REDIS_URL="redis://localhost:6379/0" \
-            -e CELERY_BROKER_URL="redis://localhost:6379/0" \
-            -e CELERY_RESULT_BACKEND="redis://localhost:6379/0" \
-            $DOCKER_HUB_USERNAME/myapp:$GITHUB_SHA
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          mkdir -p ~/myapp
+          cd ~/myapp
+          
+          # Обновляем docker-compose.yml и .env
+          cat > docker-compose.yml << 'EOF2'
+          $(curl -s https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}/docker-compose.yml)
+          EOF2
+          
+          cat > .env << 'EOF2'
+          DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
+          ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}
+          POSTGRES_DB=lms
+          POSTGRES_USER=postgres
+          POSTGRES_PASSWORD=1968919322
+          REDIS_URL=redis://redis:6379/0
+          CELERY_BROKER_URL=redis://redis:6379/0
+          CELERY_RESULT_BACKEND=redis://redis:6379/0
+          EOF2
+          
+          # Логин в Docker Hub
+          echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+          
+          # Поднимаем всё через docker-compose
+          docker-compose down
+          docker-compose pull
+          docker-compose up -d --remove-orphans
+          
+          # Выход из Docker Hub
           docker logout
           EOF
-        env:
-          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-          DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-          GITHUB_SHA: ${{ github.sha }}
-          SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
 
 
