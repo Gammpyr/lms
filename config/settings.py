@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
+import sys
 from datetime import timedelta
 from pathlib import Path
 
@@ -151,13 +152,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "users.CustomUser"
 
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-#         'LOCATION': 'redis://redis:6379/1',
-#     }
-# }
-
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
@@ -165,11 +159,9 @@ CACHES = {
     }
 }
 
-# CELERY_BROKER_URL = 'redis://redis:6379'
 CELERY_BROKER_URL = f'redis://{os.getenv("REDIS_HOST")}:{os.getenv("REDIS_PORT")}/1'
 
 # URL-адрес брокера результатов, также Redis
-# CELERY_RESULT_BACKEND = 'redis://redis:6379'
 CELERY_RESULT_BACKEND = f'redis://{os.getenv("REDIS_HOST")}:{os.getenv("REDIS_PORT")}/1'
 
 # Часовой пояс для работы Celery
@@ -189,3 +181,11 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_EMAIL_HOST_USER")
+
+if 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'test_db.sqlite3',
+        }
+    }

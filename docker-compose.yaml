@@ -4,8 +4,8 @@ services:
     command: >
       sh -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"
     volumes:
-      - .:/code
-      - static_volume:/code/static
+      - .:/app
+      - static_volume:/app/static
     ports:
       - "8000:8000"
     depends_on:
@@ -30,7 +30,7 @@ services:
     build: .
     command: celery -A config worker -l info
     volumes:
-      - .:/code
+      - .:/app
     depends_on:
       - db
       - redis
@@ -41,7 +41,7 @@ services:
     build: .
     command: celery -A config beat -l info
     volumes:
-      - .:/code
+      - .:/app
     depends_on:
       - db
       - redis
