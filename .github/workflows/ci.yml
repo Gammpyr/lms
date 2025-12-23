@@ -20,11 +20,15 @@ jobs:
           pip install flake8
 
       - name: Run flake8
-        run: flake8 .
+        run: flake8 . --exclude=migrations,venv,env,.venv
 
   test:
     runs-on: ubuntu-latest
     needs: lint
+
+    env:
+      SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+      ALLOWED_HOSTS: "158.160.216.89,localhost,127.0.0.1"
 
     steps:
       - name: Check out code
@@ -42,8 +46,7 @@ jobs:
 
       - name: Run tests
         run: python manage.py test
-        env:
-          SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+
 
   build:
     needs: test
