@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0005_payment_payment_url_payment_price_id_and_more'),
+        ("users", "0005_payment_payment_url_payment_price_id_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='payment',
-            name='payment_url',
-            field=models.URLField(blank=True, max_length=500, null=True, verbose_name='Ссылка на оплату'),
+            model_name="payment",
+            name="payment_url",
+            field=models.URLField(
+                blank=True, max_length=500, null=True, verbose_name="Ссылка на оплату"
+            ),
         ),
     ]

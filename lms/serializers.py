@@ -9,7 +9,7 @@ from .validators import UrlValidator
 class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
-        fields = '__all__'
+        fields = "__all__"
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -19,32 +19,38 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def get_lesson_count(self, obj):
         """ПОдсчитываем количество уроков в курсе"""
-        if obj.course_lessons.all():
-            return obj.course_lessons.all().count()
+        if obj.lessons.all():
+            return obj.lessons.all().count()
         else:
             return 0
 
     def get_is_subscribed(self, obj):
         """Проверяем подписан ли пользователь на курс"""
-        request = self.context.get('request')
+        request = self.context.get("request")
         if request:
-            return CourseSubscription.objects.filter(user=request.user, course=obj).exists()
+            return CourseSubscription.objects.filter(
+                user=request.user, course=obj
+            ).exists()
         return False
 
     def validate(self, attrs):
-        video_url = attrs.get('video_url')
-        if video_url and not re.search(r'(youtube\.com|youtu\.be)', video_url):
-            raise serializers.ValidationError({'video_url': 'Разрешены только ссылки на YouTube'})
+        video_url = attrs.get("video_url")
+        if video_url and not re.search(r"(youtube\.com|youtu\.be)", video_url):
+            raise serializers.ValidationError(
+                {"video_url": "Разрешены только ссылки на YouTube"}
+            )
         return attrs
 
     class Meta:
         model = Course
-        fields = '__all__'
-        validators = [UrlValidator(field='video_url')]
-        read_only_fields = ['notification_task_id', 'owner', 'updated_at']
+        # fields = '__all__'
+        validators = [UrlValidator(field="video_url")]
+        read_only_fields = ["notification_task_id", "owner", "updated_at"]
+        exclude = ["updated_at"]
+
 
 class CourseSubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseSubscription
-        fields = '__all__'
-        read_only_fields = ['user', 'created_at']
+        fields = "__all__"
+        read_only_fields = ["user", "created_at"]

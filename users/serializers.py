@@ -6,8 +6,14 @@ from .models import CustomUser, Payment
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = '__all__'
-        read_only_fields = ['user','session_id', 'payment_url', 'product_id', 'price_id']
+        fields = "__all__"
+        read_only_fields = [
+            "user",
+            "session_id",
+            "payment_url",
+            "product_id",
+            "price_id",
+        ]
 
     def validate_payment_amount(self, value):
         if value <= 0:
@@ -15,8 +21,8 @@ class PaymentSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, data):
-        paid_course = data.get('paid_course')
-        paid_lesson = data.get('paid_lesson')
+        paid_course = data.get("paid_course")
+        paid_lesson = data.get("paid_lesson")
 
         if not paid_course and not paid_lesson:
             raise serializers.ValidationError(
@@ -35,5 +41,10 @@ class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = [
-            'first_name', 'last_name', 'phone_number', 'avatar', 'country', 'payments',
+            "first_name",
+            "last_name",
+            "phone_number",
+            "avatar",
+            "country",
+            "payments",
         ]

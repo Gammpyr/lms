@@ -9,7 +9,7 @@ from lms.paginators import LessonPagination, CoursePagination
 from lms.permissions import IsModerator, IsOwner
 from lms.serializers import CourseSerializer, LessonSerializer
 from lms.services import check_task_creation_time
-from lms.tasks import send_email_after_delay, cancel_delayed_task
+from lms.tasks import send_email_after_delay
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -18,11 +18,16 @@ class CourseViewSet(viewsets.ModelViewSet):
     pagination_class = CoursePagination
 
     def get_permissions(self):
-        if self.action in ['list', 'retrieve', 'update', 'partial_update', ]:
+        if self.action in [
+            "list",
+            "retrieve",
+            "update",
+            "partial_update",
+        ]:
             permission_classes = [IsModerator | IsOwner]
-        elif self.action in ['create']:
+        elif self.action in ["create"]:
             permission_classes = [IsAuthenticated & ~IsModerator]
-        elif self.action in ['destroy']:
+        elif self.action in ["destroy"]:
             permission_classes = [IsOwner]
         else:
             return super().get_permissions()
@@ -33,7 +38,7 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        context['request'] = self.request
+        context["request"] = self.request
         return context
 
     def perform_update(self, serializer):
@@ -42,7 +47,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         # разослать письма всем подписчикам курса
 
         instance = self.get_object()
-        old_task_id =  instance.notification_task_id
+        old_task_id = instance.notification_task_id
         old_updated_at = instance.updated_at
 
         instance = serializer.save()
@@ -51,8 +56,7 @@ class CourseViewSet(viewsets.ModelViewSet):
             check_task_creation_time(old_task_id, old_updated_at)
 
         task = send_email_after_delay.apply_async(
-            args=[instance.id, 'update'],
-            countdown=4 * 60 * 60
+            args=[instance.id], countdown=4 * 60 * 60
         )
         instance.notification_task_id = task.id
         instance.save()
@@ -94,11 +98,12 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
 
 class CourseSubscriptionAPIView(APIView):
     """Управление подпиской на курс"""
+
     permission_classes = [IsAuthenticated]
 
     def post(self, *args, **kwargs):
         user = self.request.user
-        course_id = self.request.data.get('course_id')
+        course_id = self.request.data.get("course_id")
         course_item = get_object_or_404(Course, id=course_id)
 
         subs_item = CourseSubscription.objects.filter(user=user, course=course_item)

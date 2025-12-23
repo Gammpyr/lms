@@ -8,36 +8,75 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Course',
+            name="Course",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Название')),
-                ('description', models.TextField(blank=True, verbose_name='Описание')),
-                ('image', models.ImageField(blank=True, null=True, upload_to='images/', verbose_name='Превью')),
-                ('video_url', models.URLField(blank=True, null=True, verbose_name='Ссылка на видео')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Название")),
+                ("description", models.TextField(blank=True, verbose_name="Описание")),
+                (
+                    "image",
+                    models.ImageField(
+                        blank=True,
+                        null=True,
+                        upload_to="images/",
+                        verbose_name="Превью",
+                    ),
+                ),
+                (
+                    "video_url",
+                    models.URLField(
+                        blank=True, null=True, verbose_name="Ссылка на видео"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Курс',
-                'verbose_name_plural': 'Курсы',
+                "verbose_name": "Курс",
+                "verbose_name_plural": "Курсы",
             },
         ),
         migrations.CreateModel(
-            name='Lesson',
+            name="Lesson",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Название')),
-                ('image', models.ImageField(upload_to='images/', verbose_name='Превью')),
-                ('description', models.TextField(verbose_name='Описание')),
-                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lessons', to='lms.course', verbose_name='Курс')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Название")),
+                (
+                    "image",
+                    models.ImageField(upload_to="images/", verbose_name="Превью"),
+                ),
+                ("description", models.TextField(verbose_name="Описание")),
+                (
+                    "course",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="lessons",
+                        to="lms.course",
+                        verbose_name="Курс",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Урок',
-                'verbose_name_plural': 'Уроки',
+                "verbose_name": "Урок",
+                "verbose_name_plural": "Уроки",
             },
         ),
     ]

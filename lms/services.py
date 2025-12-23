@@ -15,13 +15,15 @@ def set_schedule(*args, **kwargs):
     )
     PeriodicTask.objects.create(
         interval=schedule,  # we created this above.
-        name='Importing contacts',  # simply describes this periodic task.
-        task='config.tasks.import_contacts',  # name of task.
-        args=json.dumps(['arg1', 'arg2']),
-        kwargs=json.dumps({
-            'be_careful': True,
-        }),
-        expires=datetime.utcnow() + timedelta(seconds=30)
+        name="Importing contacts",  # simply describes this periodic task.
+        task="config.tasks.import_contacts",  # name of task.
+        args=json.dumps(["arg1", "arg2"]),
+        kwargs=json.dumps(
+            {
+                "be_careful": True,
+            }
+        ),
+        expires=datetime.utcnow() + timedelta(seconds=30),
     )
 
 
@@ -35,6 +37,6 @@ def check_task_creation_time(task_id, updated_at):
 
             if current_time - updated_at < timedelta(hours=4):
                 cancel_delayed_task(task_id)
-                print(f'Задача {task_id}({task.name}) отменена')
+                print(f"Задача {task_id}({task.name}) отменена")
     except Exception as e:
-        print(f'Ошибка во время проверки времени создания задачи: {e}')
+        print(f"Ошибка во время проверки времени создания задачи: {e}")
