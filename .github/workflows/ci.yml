@@ -87,22 +87,26 @@ jobs:
 
       - name: Deploy to server
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
-          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << EOF
+          echo "$DOCKER_HUB_ACCESS_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+          docker pull $DOCKER_HUB_USERNAME/myapp:$GITHUB_SHA
           docker stop myapp || true
           docker rm myapp || true
           docker run -d \
             --name myapp \
             -p 80:8000 \
             -e DJANGO_SECRET_KEY="$DJANGO_SECRET_KEY" \
-            -e REDIS_URL="redis://redis:6379/0" \
-            -e CELERY_BROKER_URL="redis://redis:6379/0" \
-            -e CELERY_RESULT_BACKEND="redis://redis:6379/0" \
-            ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+            -e REDIS_URL="redis://localhost:6379/0" \
+            -e CELERY_BROKER_URL="redis://localhost:6379/0" \
+            -e CELERY_RESULT_BACKEND="redis://localhost:6379/0" \
+            $DOCKER_HUB_USERNAME/myapp:$GITHUB_SHA
+          docker logout
           EOF
         env:
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
           DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+          GITHUB_SHA: ${{ github.sha }}
           SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
 
 
