@@ -29,8 +29,7 @@ jobs:
 
 
     env:
-      SECRET_KEY: django-insecure-test-key-for-ci-1234567890abcdef
-#      SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+      SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
       DEBUG: False
       ALLOWED_HOSTS: 158.160.216.89,localhost,127.0.0.1
       DB_NAME: lms_test
@@ -64,13 +63,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-#          echo "SECRET_KEY=$SECRET_KEY"
-
     - name: Create .env file for CI
       run: |
         # Используем переменные окружения напрямую
         {
-          echo "SECRET_KEY=django-insecure-test-key-for-ci-1234567890abcdef
+          echo "SECRET_KEY=$SECRET_KEY"
           echo "DEBUG=$DEBUG"
           echo "ALLOWED_HOSTS=$ALLOWED_HOSTS"
           echo "POSTGRES_DB=$POSTGRES_DB"
@@ -159,13 +156,10 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-#          SECRET_KEY=${DJANGO_SECRET_KEY}
-
     - name: Deploy to Server
       uses: appleboy/ssh-action@v0.1.7
       env:
-        DJANGO_SECRET_KEY: django-insecure-test-key-for-ci-1234567890abcdef
-#        DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+        DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
         POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         SERVER_IP: ${{ secrets.SERVER_IP }}
@@ -178,8 +172,9 @@ jobs:
           cd ${{ secrets.DEPLOY_DIR || '/var/www/lms' }}
           docker-compose down || true
           git pull origin main
+          
           cat > .env << 'EOF'
-          SECRET_KEY=django-insecure-test-key-for-ci-1234567890abcdef
+          SECRET_KEY=${DJANGO_SECRET_KEY}
           DEBUG=False
           ALLOWED_HOSTS=${SERVER_IP},localhost,127.0.0.1
           POSTGRES_DB=lms
