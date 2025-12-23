@@ -29,9 +29,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="course",
             name="notification_task_id",
-            field=models.CharField(
-                blank=True, max_length=255, null=True, verbose_name="ID celery-задачи"
-            ),
+            field=models.CharField(blank=True, max_length=255, null=True, verbose_name="ID celery-задачи"),
         ),
         migrations.AddField(
             model_name="course",

@@ -13,8 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="payment",
             name="payment_url",
-            field=models.URLField(
-                blank=True, max_length=500, null=True, verbose_name="Ссылка на оплату"
-            ),
+            field=models.URLField(blank=True, max_length=500, null=True, verbose_name="Ссылка на оплату"),
         ),
     ]

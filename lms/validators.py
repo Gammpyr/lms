@@ -14,6 +14,4 @@ class UrlValidator:
         field_value = value.get(self.field)
 
         if field_value and not bool(pattern.search(field_value)):
-            raise ValidationError(
-                "Запрещены ссылки на сторонние ресурсы, кроме YouTube"
-            )
+            raise ValidationError("Запрещены ссылки на сторонние ресурсы, кроме YouTube")

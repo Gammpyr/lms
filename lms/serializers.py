@@ -28,17 +28,13 @@ class CourseSerializer(serializers.ModelSerializer):
         """Проверяем подписан ли пользователь на курс"""
         request = self.context.get("request")
         if request:
-            return CourseSubscription.objects.filter(
-                user=request.user, course=obj
-            ).exists()
+            return CourseSubscription.objects.filter(user=request.user, course=obj).exists()
         return False
 
     def validate(self, attrs):
         video_url = attrs.get("video_url")
         if video_url and not re.search(r"(youtube\.com|youtu\.be)", video_url):
-            raise serializers.ValidationError(
-                {"video_url": "Разрешены только ссылки на YouTube"}
-            )
+            raise serializers.ValidationError({"video_url": "Разрешены только ссылки на YouTube"})
         return attrs
 
     class Meta:

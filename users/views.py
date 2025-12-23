@@ -38,11 +38,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
         try:
             payment = serializer.save(user=self.request.user)
 
-            product_name = (
-                payment.paid_course.name
-                if payment.paid_course
-                else payment.paid_lesson.name
-            )
+            product_name = payment.paid_course.name if payment.paid_course else payment.paid_lesson.name
 
             product = create_stripe_product(product_name)
             price = create_stripe_price(product, payment.payment_amount)

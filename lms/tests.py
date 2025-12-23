@@ -7,16 +7,10 @@ from users.models import CustomUser
 
 class CourseAPITestCase(APITestCase):
     def setUp(self):
-        self.user1 = CustomUser.objects.create_user(
-            username="test1", email="test1@test.ru", password="test1"
-        )
+        self.user1 = CustomUser.objects.create_user(username="test1", email="test1@test.ru", password="test1")
 
-        self.course1 = Course.objects.create(
-            name="test_course1", description="test_desc1", owner=self.user1
-        )
-        self.course2 = Course.objects.create(
-            name="test_course2", description="test_desc2", owner=self.user1
-        )
+        self.course1 = Course.objects.create(name="test_course1", description="test_desc1", owner=self.user1)
+        self.course2 = Course.objects.create(name="test_course2", description="test_desc2", owner=self.user1)
 
         self.client = APIClient()
 
@@ -152,13 +146,9 @@ class CourseAPITestCase(APITestCase):
 
 class LessonAPITestCase(APITestCase):
     def setUp(self):
-        self.user1 = CustomUser.objects.create_user(
-            username="test1", email="test1@test.ru", password="test1"
-        )
+        self.user1 = CustomUser.objects.create_user(username="test1", email="test1@test.ru", password="test1")
 
-        self.course1 = Course.objects.create(
-            name="test_course1", description="test_desc1", owner=self.user1
-        )
+        self.course1 = Course.objects.create(name="test_course1", description="test_desc1", owner=self.user1)
 
         self.lesson1 = Lesson.objects.create(
             name="test_lesson1",
@@ -255,13 +245,9 @@ class LessonAPITestCase(APITestCase):
 
 class CourseSubscriptionAPITestCase(APITestCase):
     def setUp(self):
-        self.user1 = CustomUser.objects.create_user(
-            username="test1", email="test1@test.ru", password="test1"
-        )
+        self.user1 = CustomUser.objects.create_user(username="test1", email="test1@test.ru", password="test1")
 
-        self.course1 = Course.objects.create(
-            name="test_course1", description="test_desc1", owner=self.user1
-        )
+        self.course1 = Course.objects.create(name="test_course1", description="test_desc1", owner=self.user1)
 
         self.client = APIClient()
 

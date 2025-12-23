@@ -25,13 +25,9 @@ class PaymentSerializer(serializers.ModelSerializer):
         paid_lesson = data.get("paid_lesson")
 
         if not paid_course and not paid_lesson:
-            raise serializers.ValidationError(
-                "Укажите, за что вы хотите оплатить. За курс или урок."
-            )
+            raise serializers.ValidationError("Укажите, за что вы хотите оплатить. За курс или урок.")
         if paid_course and paid_lesson:
-            raise serializers.ValidationError(
-                "Можно оплатить либо за курс, либо за урок."
-            )
+            raise serializers.ValidationError("Можно оплатить либо за курс, либо за урок.")
         return data
 
 

@@ -79,9 +79,7 @@ class CustomUserCreationForm(UserCreationForm):
     )
     password2 = forms.CharField(
         label="Повторите пароль",
-        widget=forms.PasswordInput(
-            attrs={"class": "form-control", "placeholder": "Подтверждение пароля"}
-        ),
+        widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Подтверждение пароля"}),
     )
     avatar = forms.ImageField(
         label="Аватар",

@@ -27,15 +27,11 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "payment_date",
-                    models.DateTimeField(
-                        auto_now_add=True, verbose_name="Дата платежа"
-                    ),
+                    models.DateTimeField(auto_now_add=True, verbose_name="Дата платежа"),
                 ),
                 (
                     "payment_amount",
-                    models.DecimalField(
-                        decimal_places=2, max_digits=10, verbose_name="Сумма платежа"
-                    ),
+                    models.DecimalField(decimal_places=2, max_digits=10, verbose_name="Сумма платежа"),
                 ),
                 (
                     "payment_method",

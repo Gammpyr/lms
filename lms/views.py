@@ -55,9 +55,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         if old_task_id:
             check_task_creation_time(old_task_id, old_updated_at)
 
-        task = send_email_after_delay.apply_async(
-            args=[instance.id], countdown=4 * 60 * 60
-        )
+        task = send_email_after_delay.apply_async(args=[instance.id], countdown=4 * 60 * 60)
         instance.notification_task_id = task.id
         instance.save()
 
