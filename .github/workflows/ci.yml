@@ -119,9 +119,9 @@ jobs:
           POSTGRES_DB=lms
           POSTGRES_USER=postgres
           POSTGRES_PASSWORD=1968919322
-          POSTGRES_HOST=db
+          POSTGRES_HOST=postgres
           POSTGRES_PORT=5432
-          DATABASE_URL=postgres://postgres:1968919322@db:5432/lms
+          DATABASE_URL=postgres://postgres:1968919322@postgres:5432/lms
           DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
           DEBUG=True
           EMAIL_HOST_USER=gamidpython@yandex.ru
