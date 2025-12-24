@@ -6,18 +6,18 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0003_payment'),
+        ("users", "0003_payment"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='payment',
-            old_name='paid_courses',
-            new_name='paid_course',
+            model_name="payment",
+            old_name="paid_courses",
+            new_name="paid_course",
         ),
         migrations.RenameField(
-            model_name='payment',
-            old_name='paid_lessons',
-            new_name='paid_lesson',
+            model_name="payment",
+            old_name="paid_lessons",
+            new_name="paid_lesson",
         ),
     ]

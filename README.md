@@ -137,6 +137,49 @@ docker-compose down
 docker-compose stop
 ```
 
+## Автоматический деплой через Docker и GitHub Actions
+Проект разворачивается автоматически при пуше в основную ветку (main) с помощью GitHub Actions.
+
+### Требования
+- Сервер с Docker и Docker Compose (Ubuntu 22.04+)
+- Доступ по SSH с ключом
+- Аккаунт на Docker Hub
+### Настройка секретов в GitHub
+Добавь в Settings → Secrets and variables → Actions следующие переменные:
+
+Секрет - Описание
+ - DOCKER_HUB_USERNAME        - Имя пользователя Docker Hub
+ - DOCKER_HUB_ACCESS_TOKEN    - Токен доступа к Docker Hub (с правами push/pull)
+ - SSH_USER                   - Пользователь на сервере (например, yc-user)
+ - SERVER_IP                  - Публичный IP-адрес сервера
+ - SSH_KEY                    - Приватный SSH-ключ для доступа к серверу
+ - DJANGO_SECRET_KEY          - Секретный ключ Django
+ - ALLOWED_HOSTS              - Список разрешённых хостов (например, "123.123.123.89", "example.com")
+
+### Как это работает
+```
+При пуше запускается CI: проверка кода → тесты → сборка Docker-образа
+Образ пушится в Docker Hub
+По SSH выполняется деплой на сервер:
+скачивается обновлённый docker-compose.yml
+поднимаются контейнеры: web, PostgreSQL, Redis, Celery
+Сайт становится доступен по IP-адресу сервера на порту 80
+Весь процесс описан в .github/workflows/ci.yml.
+```
+
+### Первый запуск вручную (на сервере)
+Если нужно запустить до первого CI:
+
+```bash
+1234
+git clone <твой-репозиторий>
+cd lms
+nano .env  # добавь свои переменные
+docker-compose up -d
+```
+
+Готово! Теперь любой коммит в main автоматически обновит сайт.
+
 ### Проверить доступность сервисов:
 
 Веб-интерфейс: http://localhost:8000

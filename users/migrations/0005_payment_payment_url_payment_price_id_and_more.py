@@ -6,28 +6,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0004_rename_paid_courses_payment_paid_course_and_more'),
+        ("users", "0004_rename_paid_courses_payment_paid_course_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='payment',
-            name='payment_url',
-            field=models.URLField(blank=True, max_length=400, null=True, verbose_name='Ссылка на оплату'),
+            model_name="payment",
+            name="payment_url",
+            field=models.URLField(blank=True, max_length=400, null=True, verbose_name="Ссылка на оплату"),
         ),
         migrations.AddField(
-            model_name='payment',
-            name='price_id',
-            field=models.CharField(blank=True, max_length=255, null=True, verbose_name='ID цены'),
+            model_name="payment",
+            name="price_id",
+            field=models.CharField(blank=True, max_length=255, null=True, verbose_name="ID цены"),
         ),
         migrations.AddField(
-            model_name='payment',
-            name='product_id',
-            field=models.CharField(blank=True, max_length=255, null=True, verbose_name='ID продукта'),
+            model_name="payment",
+            name="product_id",
+            field=models.CharField(blank=True, max_length=255, null=True, verbose_name="ID продукта"),
         ),
         migrations.AddField(
-            model_name='payment',
-            name='session_id',
-            field=models.CharField(blank=True, max_length=255, null=True, verbose_name='ID сессии'),
+            model_name="payment",
+            name="session_id",
+            field=models.CharField(blank=True, max_length=255, null=True, verbose_name="ID сессии"),
         ),
     ]

@@ -6,26 +6,34 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lms', '0005_merge_20251122_1044'),
+        ("lms", "0005_merge_20251122_1044"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='course',
-            options={'ordering': ['id'], 'verbose_name': 'Курс', 'verbose_name_plural': 'Курсы'},
+            name="course",
+            options={
+                "ordering": ["id"],
+                "verbose_name": "Курс",
+                "verbose_name_plural": "Курсы",
+            },
         ),
         migrations.AlterModelOptions(
-            name='lesson',
-            options={'ordering': ['id'], 'verbose_name': 'Урок', 'verbose_name_plural': 'Уроки'},
+            name="lesson",
+            options={
+                "ordering": ["id"],
+                "verbose_name": "Урок",
+                "verbose_name_plural": "Уроки",
+            },
         ),
         migrations.AddField(
-            model_name='course',
-            name='notification_task_id',
-            field=models.CharField(blank=True, max_length=255, null=True, verbose_name='ID celery-задачи'),
+            model_name="course",
+            name="notification_task_id",
+            field=models.CharField(blank=True, max_length=255, null=True, verbose_name="ID celery-задачи"),
         ),
         migrations.AddField(
-            model_name='course',
-            name='updated_at',
-            field=models.DateTimeField(auto_now=True, verbose_name='Дата обновления'),
+            model_name="course",
+            name="updated_at",
+            field=models.DateTimeField(auto_now=True, verbose_name="Дата обновления"),
         ),
     ]
