@@ -131,8 +131,7 @@ jobs:
           DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
           SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
         run: |
-          ssh -o StrictHostKeyChecking=no ***@*** << 'REMOTE_EOF'
-          ssh -o StrictHostKeyChecking=no ***@*** << 'INNER_EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << EOF
           echo "$DOCKER_HUB_ACCESS_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
           
           # Создаём .env на сервере
@@ -140,10 +139,10 @@ jobs:
           POSTGRES_DB=lms
           POSTGRES_USER=postgres
           POSTGRES_PASSWORD=1968919322
-          POSTGRES_HOST=postgres
+          POSTGRES_HOST=db
           POSTGRES_PORT=5432
-          DATABASE_URL=postgres://postgres:1968919322@postgres:5432/lms
-          DJANGO_SECRET_KEY="django-insecure-6s%liom0^%8=1z@)rdknm)27vuqh*g@on$(19b!h89&^oku9j@"
+          DATABASE_URL=postgres://postgres:1968919322@db:5432/lms
+          DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
           DEBUG=True
           EMAIL_HOST_USER=gamidpython@yandex.ru
           EMAIL_HOST_PASSWORD=spsszwcugmgdmmzp
@@ -153,42 +152,18 @@ jobs:
           ALLOWED_HOSTS=158.160.216.89,localhost,127.0.0.1
           EOL
           
-          # Создаем сеть если её нет
-          docker network create app-network || true
-          
-          # Удаляем старые контейнеры (силой, если запущены)
-          docker stop myapp postgres redis 2>/dev/null || true
-          docker rm -f myapp postgres redis 2>/dev/null || true
-          
-          # Запускаем PostgreSQL
-          docker run -d \
-            --name postgres \
-            --network app-network \
-            -e POSTGRES_DB=lms \
-            -e POSTGRES_USER=postgres \
-            -e POSTGRES_PASSWORD=1968919322 \
-            -v postgres_data:/var/lib/postgresql/data \
-            postgres:15
-          
-          # Запускаем Redis
-          docker run -d \
-            --name redis \
-            --network app-network \
-            redis:7-alpine
-          
-          # Даем время базе данных запуститься
-          sleep 10
-          
-          # Pull и запуск приложения
           docker pull $DOCKER_HUB_USERNAME/myapp:$GITHUB_SHA
+          docker stop myapp || true
+          docker rm -f myapp || true
           
           docker run -d \
             --name myapp \
-            --network app-network \
             -p 80:8000 \
             --env-file .env \
             $DOCKER_HUB_USERNAME/myapp:$GITHUB_SHA
           
           docker logout
-          INNER_EOF
-          REMOTE_EOF
+          EOF
+
+
+
