@@ -19,9 +19,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_DB=lms
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=1968919322
+      POSTGRES_DB: lms
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1968919322
     env_file:
       - .env
     ports:
