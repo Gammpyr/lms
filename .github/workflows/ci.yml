@@ -104,46 +104,51 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
       - name: Deploy via docker-compose
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+          ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
         run: |
-          DOCKER_COMPOSE_CONTENT=$(curl -fsSL "https://raw.githubusercontent.com/Gammpyr/lms/${{ github.sha }}/docker-compose.yaml")
-
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << EOF
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
           set -e
-
+          
+          # Установка docker-compose, если не установлен
           if ! command -v docker-compose &> /dev/null; then
             echo "📦 Installing docker-compose..."
-            sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-\$(uname -s)-\$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
           fi
-
+          
           docker system prune -af 2>/dev/null || true
           docker volume prune -f 2>/dev/null || true
           apt clean 2>/dev/null || true
-
+          
           mkdir -p ~/myapp
           cd ~/myapp
-
-          cat > docker-compose.yaml << 'EOL2'
-          $DOCKER_COMPOSE_CONTENT
-          EOL2
           
-          cat > .env << EOL2
-          DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
-          ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}
+          # Скачиваем docker-compose.yaml С ПОМОЩЬЮ curl НА САМОМ СЕРВЕРЕ
+          curl -fsSL "https://raw.githubusercontent.com/Gammpyr/lms/${GITHUB_SHA}/docker-compose.yaml" -o docker-compose.yaml
+          
+          # Создаём .env
+          cat > .env << EOL
+          DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+          ALLOWED_HOSTS=${ALLOWED_HOSTS}
           POSTGRES_DB=lms
           POSTGRES_USER=postgres
           POSTGRES_PASSWORD=1968919322
           REDIS_URL=redis://redis:6379/0
           CELERY_BROKER_URL=redis://redis:6379/0
           CELERY_RESULT_BACKEND=redis://redis:6379/0
-          EOL2
+          EOL
           
-          echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+          echo "${DOCKER_HUB_ACCESS_TOKEN}" | docker login -u "${DOCKER_HUB_USERNAME}" --password-stdin
           
-          docker compose down 2>/dev/null || true
-          docker compose pull
-          docker compose up -d --remove-orphans
+          docker-compose down 2>/dev/null || true
+          docker-compose pull
+          docker-compose up -d --remove-orphans
           
           docker logout
-
+          echo "✅ Deploy completed!"
           EOF
