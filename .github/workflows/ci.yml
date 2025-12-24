@@ -103,17 +103,19 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
-      - name: Deploy to server
-        env:
-          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-          DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-          GITHUB_SHA: ${{ github.sha }}
-          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-          SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+      - name: Deploy via docker-compose
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          DOCKER_COMPOSE_CONTENT=$(curl -fsSL "https://raw.githubusercontent.com/Gammpyr/lms/${{ github.sha }}/docker-compose.yml")
+
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << EOF
           set -e
-          
+
+          if ! command -v docker-compose &> /dev/null; then
+            echo "📦 Installing docker-compose..."
+            sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-\$(uname -s)-\$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+          fi
+
           docker system prune -af 2>/dev/null || true
           docker volume prune -f 2>/dev/null || true
           apt clean 2>/dev/null || true
@@ -121,12 +123,12 @@ jobs:
           mkdir -p ~/myapp
           cd ~/myapp
 
-          cat > docker-compose.yml << 'EOL'
-          $(curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}/docker-compose.yml)
-          EOL
-
-          cat > .env << EOL
-          DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
+          cat > docker-compose.yml << 'EOL2'
+          $DOCKER_COMPOSE_CONTENT
+          EOL2
+          
+          cat > .env << EOL2
+          DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
           ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}
           POSTGRES_DB=lms
           POSTGRES_USER=postgres
@@ -134,14 +136,14 @@ jobs:
           REDIS_URL=redis://redis:6379/0
           CELERY_BROKER_URL=redis://redis:6379/0
           CELERY_RESULT_BACKEND=redis://redis:6379/0
-          EOL
-
+          EOL2
+          
           echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
-
+          
           docker compose down 2>/dev/null || true
           docker compose pull
           docker compose up -d --remove-orphans
-
-          docker logout
           
+          docker logout
+
           EOF
