@@ -16,14 +16,6 @@ from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 
-print("=== Django Settings Debug ===")
-print(f"DEBUG: {os.getenv('DEBUG')}")
-print(f"ALLOWED_HOSTS: {os.getenv('ALLOWED_HOSTS')}")
-print(f"DB_ENGINE: {os.getenv('DB_ENGINE')}")
-print(f"DB_HOST: {os.getenv('DB_HOST')}")
-print(f"DB_PORT: {os.getenv('DB_PORT')}")
-print("=============================")
-
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -218,3 +210,12 @@ if 'test' in sys.argv:
 #     except:
 #         print("Database not available, skipping migrations")
 #         sys.exit(0)
+
+
+print("=== Django Settings Debug ===")
+print(f"DEBUG: {os.getenv('DEBUG')}")
+print(f"ALLOWED_HOSTS: {os.getenv('ALLOWED_HOSTS')}")
+print(f"DB_ENGINE: {os.getenv('DB_ENGINE')}")
+print(f"DB_HOST: {os.getenv('DB_HOST')}")
+print(f"DB_PORT: {os.getenv('DB_PORT')}")
+print("=============================")
