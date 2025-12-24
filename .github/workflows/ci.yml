@@ -107,27 +107,40 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << EOF
           echo "$DOCKER_HUB_ACCESS_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+          
+          # Создаём .env на сервере
+          cat > .env << 'EOL'
+          POSTGRES_DB=lms
+          POSTGRES_USER=postgres
+          POSTGRES_PASSWORD=1968919322
+          POSTGRES_HOST=db
+          POSTGRES_PORT=5432
+          DATABASE_URL=postgres://postgres:1968919322@db:5432/lms
+          DJANGO_SECRET_KEY=django-insecure-6s%liom0^%8=1z@)rdknm)27vuqh*g@on$(19b!h89&^oku9j@
+          DEBUG=True
+          EMAIL_HOST_USER=gamidpython@yandex.ru
+          EMAIL_HOST_PASSWORD=spsszwcugmgdmmzp
+          CACHE_ENABLED=True
+          REDIS_HOST=redis
+          REDIS_PORT=6379
+          ALLOWED_HOSTS=158.160.216.89,localhost,127.0.0.1
+          EOL
+          
           docker pull $DOCKER_HUB_USERNAME/myapp:$GITHUB_SHA
           docker stop myapp || true
           docker rm myapp || true
+          
           docker run -d \
             --name myapp \
             -p 80:8000 \
-            -e DJANGO_SECRET_KEY='$DJANGO_SECRET_KEY' \
-            -e REDIS_URL="redis://localhost:6379/0" \
-            -e CELERY_BROKER_URL="redis://localhost:6379/0" \
-            -e CELERY_RESULT_BACKEND="redis://localhost:6379/0" \
-            -e ALLOWED_HOSTS="$ALLOWED_HOSTS" \
-            -e DEBAG="True" \
+            --env-file .env \
             $DOCKER_HUB_USERNAME/myapp:$GITHUB_SHA
+          
           docker logout
           EOF
         env:
           DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
           DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
           GITHUB_SHA: ${{ github.sha }}
-          SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-          ALLOWED_HOSTS: ${{ secrets.SERVER_IP }},localhost,127.0.0.1,0.0.0.0
 
 
