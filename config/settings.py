@@ -210,6 +210,3 @@ if 'test' in sys.argv:
 #     except:
 #         print("Database not available, skipping migrations")
 #         sys.exit(0)
-
-
-
