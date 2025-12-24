@@ -103,52 +103,47 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
-      - name: Deploy via docker-compose
+      - name: Deploy to server
         env:
-          GITHUB_SHA: ${{ github.sha }}
-          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-          ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
           DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
           DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          GITHUB_SHA: ${{ github.sha }}
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+          SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << EOF
-          set -e
+          echo "$DOCKER_HUB_ACCESS_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
           
-          # Установка docker-compose, если не установлен
-          if ! command -v docker-compose &> /dev/null; then
-            echo "📦 Installing docker-compose..."
-            sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-            sudo chmod +x /usr/local/bin/docker-compose
-          fi
-          
-          docker system prune -af 2>/dev/null || true
-          docker volume prune -f 2>/dev/null || true
-          apt clean 2>/dev/null || true
-          
-          mkdir -p ~/myapp
-          cd ~/myapp
-          
-          # Скачиваем docker-compose.yaml С ПОМОЩЬЮ curl НА САМОМ СЕРВЕРЕ
-          curl -fsSL "https://raw.githubusercontent.com/Gammpyr/lms/${GITHUB_SHA}/docker-compose.yaml" -o docker-compose.yaml
-          
-          # Создаём .env
-          cat > .env << EOL
-          DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
-          ALLOWED_HOSTS=${ALLOWED_HOSTS}
+          # Создаём .env на сервере
+          cat > .env << 'EOL'
           POSTGRES_DB=lms
           POSTGRES_USER=postgres
           POSTGRES_PASSWORD=1968919322
-          REDIS_URL=redis://redis:6379/0
-          CELERY_BROKER_URL=redis://redis:6379/0
-          CELERY_RESULT_BACKEND=redis://redis:6379/0
+          POSTGRES_HOST=db
+          POSTGRES_PORT=5432
+          DATABASE_URL=postgres://postgres:1968919322@db:5432/lms
+          DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
+          DEBUG=True
+          EMAIL_HOST_USER=gamidpython@yandex.ru
+          EMAIL_HOST_PASSWORD=spsszwcugmgdmmzp
+          CACHE_ENABLED=True
+          REDIS_HOST=redis
+          REDIS_PORT=6379
+          ALLOWED_HOSTS=158.160.216.89,localhost,127.0.0.1
           EOL
           
-          echo "${DOCKER_HUB_ACCESS_TOKEN}" | docker login -u "${DOCKER_HUB_USERNAME}" --password-stdin
+          docker pull $DOCKER_HUB_USERNAME/myapp:$GITHUB_SHA
+          docker stop myapp || true
+          docker rm myapp || true
           
-          docker-compose down 2>/dev/null || true
-          docker-compose pull
-          docker-compose up -d --remove-orphans
+          docker run -d \
+            --name myapp \
+            -p 80:8000 \
+            --env-file .env \
+            $DOCKER_HUB_USERNAME/myapp:$GITHUB_SHA
           
           docker logout
-          echo "✅ Deploy completed!"
           EOF
+
+
+
