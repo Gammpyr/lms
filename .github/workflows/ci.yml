@@ -104,6 +104,12 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
       - name: Deploy to server
+        env:
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          GITHUB_SHA: ${{ github.sha }}
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+          SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << EOF
           echo "$DOCKER_HUB_ACCESS_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
@@ -116,7 +122,7 @@ jobs:
           POSTGRES_HOST=db
           POSTGRES_PORT=5432
           DATABASE_URL=postgres://postgres:1968919322@db:5432/lms
-          DJANGO_SECRET_KEY="django-insecure-6s%liom0^%8=1z@)rdknm)27vuqh*g@on$(19b!h89&^oku9j@"
+          DJANGO_SECRET_KEY=django-insecure-6s%liom0^%8=1z@)rdknm)27vuqh*g@on$(19b!h89&^oku9j@
           DEBUG=True
           EMAIL_HOST_USER=gamidpython@yandex.ru
           EMAIL_HOST_PASSWORD=spsszwcugmgdmmzp
@@ -138,9 +144,6 @@ jobs:
           
           docker logout
           EOF
-        env:
-          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-          DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-          GITHUB_SHA: ${{ github.sha }}
+
 
 
