@@ -111,39 +111,38 @@ jobs:
           DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
           SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << EOF
-          echo "$DOCKER_HUB_ACCESS_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          set -e
           
-          # Создаём .env на сервере
-          cat > .env << 'EOL'
+          echo "🧹 Cleaning Docker and system cache..."
+          docker system prune -af 2>/dev/null || true
+          docker volume prune -f 2>/dev/null || true
+          apt clean 2>/dev/null || true
+
+          mkdir -p /opt/myapp
+          cd /opt/myapp
+
+          cat > docker-compose.yml << 'EOL'
+          $(curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}/docker-compose.yml)
+          EOL
+
+          cat > .env << EOL
+          DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
+          ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}
           POSTGRES_DB=lms
           POSTGRES_USER=postgres
           POSTGRES_PASSWORD=1968919322
-          POSTGRES_HOST=postgres
-          POSTGRES_PORT=5432
-          DATABASE_URL=postgres://postgres:1968919322@postgres:5432/lms
-          DJANGO_SECRET_KEY=$DJANGO_SECRET_KEY
-          DEBUG=True
-          EMAIL_HOST_USER=gamidpython@yandex.ru
-          EMAIL_HOST_PASSWORD=spsszwcugmgdmmzp
-          CACHE_ENABLED=True
-          REDIS_HOST=redis
-          REDIS_PORT=6379
-          ALLOWED_HOSTS=158.160.216.89,localhost,127.0.0.1
+          REDIS_URL=redis://redis:6379/0
+          CELERY_BROKER_URL=redis://redis:6379/0
+          CELERY_RESULT_BACKEND=redis://redis:6379/0
           EOL
-          
-          docker pull $DOCKER_HUB_USERNAME/myapp:$GITHUB_SHA
-          docker stop myapp || true
-          docker rm myapp || true
-          
-          docker run -d \
-            --name myapp \
-            -p 80:8000 \
-            --env-file .env \
-            $DOCKER_HUB_USERNAME/myapp:$GITHUB_SHA
-          
+
+          echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+          docker-compose down 2>/dev/null || true
+          docker-compose pull
+          docker-compose up -d --remove-orphans
+
           docker logout
+          
           EOF
-
-
-
