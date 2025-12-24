@@ -105,7 +105,7 @@ jobs:
 
       - name: Deploy via docker-compose
         run: |
-          DOCKER_COMPOSE_CONTENT=$(curl -fsSL "https://raw.githubusercontent.com/Gammpyr/lms/${{ github.sha }}/docker-compose.yml")
+          DOCKER_COMPOSE_CONTENT=$(curl -fsSL "https://raw.githubusercontent.com/Gammpyr/lms/${{ github.sha }}/docker-compose.yaml")
 
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << EOF
           set -e
@@ -123,7 +123,7 @@ jobs:
           mkdir -p ~/myapp
           cd ~/myapp
 
-          cat > docker-compose.yml << 'EOL2'
+          cat > docker-compose.yaml << 'EOL2'
           $DOCKER_COMPOSE_CONTENT
           EOL2
           
