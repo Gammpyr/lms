@@ -118,6 +118,7 @@ jobs:
             -e CELERY_BROKER_URL="redis://localhost:6379/0" \
             -e CELERY_RESULT_BACKEND="redis://localhost:6379/0" \
             -e ALLOWED_HOSTS="$ALLOWED_HOSTS" \
+            -e DEBAG="True" \
             $DOCKER_HUB_USERNAME/myapp:$GITHUB_SHA
           docker logout
           EOF
