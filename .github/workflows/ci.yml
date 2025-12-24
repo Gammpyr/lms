@@ -114,13 +114,12 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
           set -e
           
-          echo "🧹 Cleaning Docker and system cache..."
           docker system prune -af 2>/dev/null || true
           docker volume prune -f 2>/dev/null || true
           apt clean 2>/dev/null || true
 
-          mkdir -p /opt/myapp
-          cd /opt/myapp
+          mkdir -p ~/myapp
+          cd ~/myapp
 
           cat > docker-compose.yml << 'EOL'
           $(curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/${{ github.sha }}/docker-compose.yml)
