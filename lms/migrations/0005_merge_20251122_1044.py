@@ -6,9 +6,8 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lms', '0004_alter_lesson_course'),
-        ('lms', '0004_coursesubscription'),
+        ("lms", "0004_alter_lesson_course"),
+        ("lms", "0004_coursesubscription"),
     ]
 
-    operations = [
-    ]
+    operations = []

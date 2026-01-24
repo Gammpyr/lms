@@ -3,7 +3,7 @@ from rest_framework.permissions import BasePermission
 
 class IsModerator(BasePermission):
     def has_permission(self, request, view):
-        is_moderator = request.user.groups.filter(name='Moderator').exists()
+        is_moderator = request.user.groups.filter(name="Moderator").exists()
         return request.user.is_authenticated and is_moderator
 
         # if request.method in ['POST', 'DELETE'] and is_moderator:
