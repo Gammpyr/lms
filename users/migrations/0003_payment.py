@@ -8,25 +8,74 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lms', '0002_alter_lesson_description_alter_lesson_image'),
-        ('users', '0002_customuser_avatar_customuser_country_and_more'),
+        ("lms", "0002_alter_lesson_description_alter_lesson_image"),
+        ("users", "0002_customuser_avatar_customuser_country_and_more"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Payment',
+            name="Payment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('payment_date', models.DateTimeField(auto_now_add=True, verbose_name='Дата платежа')),
-                ('payment_amount', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Сумма платежа')),
-                ('payment_method', models.CharField(choices=[('cash', 'Наличные'), ('transfer', 'Перевод')], default='transfer', max_length=50, verbose_name='Метод оплаты')),
-                ('paid_courses', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='paid_users', to='lms.course', verbose_name='Оплаченный курс')),
-                ('paid_lessons', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='paid_users', to='lms.lesson', verbose_name='Оплаченный урок')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='payments', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "payment_date",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Дата платежа"),
+                ),
+                (
+                    "payment_amount",
+                    models.DecimalField(decimal_places=2, max_digits=10, verbose_name="Сумма платежа"),
+                ),
+                (
+                    "payment_method",
+                    models.CharField(
+                        choices=[("cash", "Наличные"), ("transfer", "Перевод")],
+                        default="transfer",
+                        max_length=50,
+                        verbose_name="Метод оплаты",
+                    ),
+                ),
+                (
+                    "paid_courses",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="paid_users",
+                        to="lms.course",
+                        verbose_name="Оплаченный курс",
+                    ),
+                ),
+                (
+                    "paid_lessons",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="paid_users",
+                        to="lms.lesson",
+                        verbose_name="Оплаченный урок",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="payments",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Платеж',
-                'verbose_name_plural': 'Платежи',
+                "verbose_name": "Платеж",
+                "verbose_name_plural": "Платежи",
             },
         ),
     ]

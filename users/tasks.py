@@ -13,19 +13,14 @@ def check_user_last_activity():
     current_date = timezone.now()
     month_ago = current_date - timedelta(days=30)
 
-    users = CustomUser.objects.filter(
-        is_active=True,
-        last_login__lt=month_ago
-    ) | CustomUser.objects.filter(
-        is_active=True,
-        last_login__isnull=True
+    users = CustomUser.objects.filter(is_active=True, last_login__lt=month_ago) | CustomUser.objects.filter(
+        is_active=True, last_login__isnull=True
     )
 
     users_count = users.count()
     users.update(is_active=False)
 
-
     return {
-        'status': 'success',
-        'users_blocked': users_count,
+        "status": "success",
+        "users_blocked": users_count,
     }
